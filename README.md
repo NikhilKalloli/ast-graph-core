@@ -18,6 +18,9 @@ Currently analyzing: **Cluster 33** from Twenty CRM's [codebase](https://github.
 npm install tree-sitter tree-sitter-typescript --legacy-peer-deps
 ```
 
+![image](https://github.com/user-attachments/assets/09b9a02e-74fc-4f59-bf2d-fd06004c722b)
+
+
 
 ### Feature Extraction
 
