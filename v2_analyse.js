@@ -10,7 +10,14 @@ parser.setLanguage(TypeScript);
 const comprehensiveQueryString = `
 ; --- Declarations ---
 (function_declaration name: (identifier) @function_name parameters: (formal_parameters) @function_params body: (statement_block) @function_body) @function_definition
-(class_declaration name: (type_identifier) @class_name body: (class_body) @class_body) @class_definition
+
+(class_declaration
+  name: (type_identifier) @class_name
+  ; CORRECTED: Look for implements_clause as a potential child node pattern, often within class_heritage
+  (class_heritage . (implements_clause . (type_identifier) @implemented_interface_name)?)?
+  body: (class_body) @class_body
+) @class_definition
+
 (method_definition name: (property_identifier) @method_name parameters: (formal_parameters) @method_params body: (statement_block) @method_body) @method_definition
 (public_field_definition name: (property_identifier) @class_prop_name) @class_property
 (interface_declaration name: (type_identifier) @interface_name) @interface_definition
