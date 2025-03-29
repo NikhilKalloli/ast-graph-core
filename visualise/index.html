@@ -257,12 +257,12 @@
 
   // Load data and initialize visualization
   Promise.all([
-    fetch('../cluster_33_similarity_edges.json')
+    fetch('./cluster_33_similarity_edges.json')
       .then(response => {
         if (!response.ok) throw new Error(`Edges file error! status: ${response.status}`);
         return response.json();
       }),
-    fetch('../cluster_33_features.json')
+    fetch('./cluster_33_features.json')
       .then(response => {
         if (!response.ok) throw new Error(`Features file error! status: ${response.status}`);
         return response.json();
