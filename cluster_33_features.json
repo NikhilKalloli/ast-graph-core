@@ -1,0 +1,439 @@
+{
+  "/twenty/packages/twenty-server/src/engine/core-modules/email/email-sender.service.ts": {
+    "filePath": "/twenty/packages/twenty-server/src/engine/core-modules/email/email-sender.service.ts",
+    "featureSets": {
+      "functionNames": [],
+      "classNames": [
+        "EmailSenderService"
+      ],
+      "methodNames": [
+        "EmailSenderService::constructor",
+        "EmailSenderService::send"
+      ],
+      "classPropNames": [],
+      "interfaceNames": [],
+      "typeAliasNames": [],
+      "enumNames": [],
+      "variableNames": [],
+      "assignTargets": [],
+      "callFuncNames": [
+        "Injectable",
+        "Inject"
+      ],
+      "callMethodNames": [
+        "send"
+      ],
+      "callObjectTargets": [
+        "this.driver"
+      ],
+      "importSources": [
+        "'@nestjs/common'",
+        "'nodemailer'",
+        "'src/engine/core-modules/email/drivers/interfaces/email-driver.interface'",
+        "'src/engine/core-modules/email/email.constants'"
+      ],
+      "stringLiterals": [
+        "'@nestjs/common'",
+        "'nodemailer'",
+        "'src/engine/core-modules/email/drivers/interfaces/email-driver.interface'",
+        "'src/engine/core-modules/email/email.constants'"
+      ]
+    },
+    "nodeCounts": {
+      "import_statement": 4,
+      "capture_import_statement": 4,
+      "string": 8,
+      "capture_import_source": 4,
+      "capture_string_literal": 4,
+      "export_statement": 1,
+      "capture_export_statement": 1,
+      "call_expression": 3,
+      "capture_call_expression_direct": 2,
+      "identifier": 2,
+      "capture_call_func_name": 2,
+      "class_declaration": 1,
+      "capture_class_definition": 1,
+      "type_identifier": 1,
+      "capture_class_name": 1,
+      "class_body": 1,
+      "capture_class_body": 1,
+      "method_definition": 2,
+      "capture_method_definition": 2,
+      "property_identifier": 3,
+      "capture_method_name": 2,
+      "formal_parameters": 2,
+      "capture_method_params": 2,
+      "type_annotation": 3,
+      "capture_type_annotation": 3,
+      "statement_block": 2,
+      "capture_method_body": 2,
+      "capture_call_expression_member": 1,
+      "member_expression": 1,
+      "capture_call_object": 1,
+      "capture_call_method_name": 1
+    }
+  },
+  "/twenty/packages/twenty-server/src/engine/core-modules/email/email.module.ts": {
+    "filePath": "/twenty/packages/twenty-server/src/engine/core-modules/email/email.module.ts",
+    "featureSets": {
+      "functionNames": [],
+      "classNames": [
+        "EmailModule"
+      ],
+      "methodNames": [
+        "EmailModule::forRoot"
+      ],
+      "classPropNames": [],
+      "interfaceNames": [],
+      "typeAliasNames": [],
+      "enumNames": [],
+      "variableNames": [
+        "provider",
+        "config"
+      ],
+      "assignTargets": [],
+      "callFuncNames": [
+        "Global"
+      ],
+      "callMethodNames": [
+        "useFactory"
+      ],
+      "callObjectTargets": [
+        "options"
+      ],
+      "importSources": [
+        "'@nestjs/common'",
+        "'src/engine/core-modules/email/interfaces/email.interface'",
+        "'src/engine/core-modules/email/email.constants'",
+        "'src/engine/core-modules/email/drivers/logger.driver'",
+        "'src/engine/core-modules/email/drivers/smtp.driver'",
+        "'src/engine/core-modules/email/email.service'",
+        "'src/engine/core-modules/email/email-sender.service'"
+      ],
+      "stringLiterals": [
+        "'@nestjs/common'",
+        "'src/engine/core-modules/email/interfaces/email.interface'",
+        "'src/engine/core-modules/email/email.constants'",
+        "'src/engine/core-modules/email/drivers/logger.driver'",
+        "'src/engine/core-modules/email/drivers/smtp.driver'",
+        "'src/engine/core-modules/email/email.service'",
+        "'src/engine/core-modules/email/email-sender.service'"
+      ]
+    },
+    "nodeCounts": {
+      "import_statement": 7,
+      "capture_import_statement": 7,
+      "string": 14,
+      "capture_import_source": 7,
+      "capture_string_literal": 7,
+      "export_statement": 1,
+      "capture_export_statement": 1,
+      "call_expression": 2,
+      "capture_call_expression_direct": 1,
+      "identifier": 4,
+      "capture_call_func_name": 1,
+      "class_declaration": 1,
+      "capture_class_definition": 1,
+      "type_identifier": 1,
+      "capture_class_name": 1,
+      "class_body": 1,
+      "capture_class_body": 1,
+      "method_definition": 1,
+      "capture_method_definition": 1,
+      "property_identifier": 2,
+      "capture_method_name": 1,
+      "formal_parameters": 1,
+      "capture_method_params": 1,
+      "type_annotation": 3,
+      "capture_type_annotation": 3,
+      "statement_block": 1,
+      "capture_method_body": 1,
+      "lexical_declaration": 2,
+      "capture_variable_declaration": 2,
+      "capture_variable_name": 2,
+      "capture_call_expression_member": 1,
+      "capture_call_object": 1,
+      "capture_call_method_name": 1
+    }
+  },
+  "/twenty/packages/twenty-server/src/engine/core-modules/email/email.service.ts": {
+    "filePath": "/twenty/packages/twenty-server/src/engine/core-modules/email/email.service.ts",
+    "featureSets": {
+      "functionNames": [],
+      "classNames": [
+        "EmailService"
+      ],
+      "methodNames": [
+        "EmailService::constructor",
+        "EmailService::send"
+      ],
+      "classPropNames": [],
+      "interfaceNames": [],
+      "typeAliasNames": [],
+      "enumNames": [],
+      "variableNames": [],
+      "assignTargets": [],
+      "callFuncNames": [
+        "Injectable",
+        "InjectMessageQueue"
+      ],
+      "callMethodNames": [],
+      "callObjectTargets": [],
+      "importSources": [
+        "'@nestjs/common'",
+        "'nodemailer'",
+        "'src/engine/core-modules/email/email-sender.job'",
+        "'src/engine/core-modules/message-queue/decorators/message-queue.decorator'",
+        "'src/engine/core-modules/message-queue/message-queue.constants'",
+        "'src/engine/core-modules/message-queue/services/message-queue.service'"
+      ],
+      "stringLiterals": [
+        "'@nestjs/common'",
+        "'nodemailer'",
+        "'src/engine/core-modules/email/email-sender.job'",
+        "'src/engine/core-modules/message-queue/decorators/message-queue.decorator'",
+        "'src/engine/core-modules/message-queue/message-queue.constants'",
+        "'src/engine/core-modules/message-queue/services/message-queue.service'"
+      ]
+    },
+    "nodeCounts": {
+      "import_statement": 6,
+      "capture_import_statement": 6,
+      "string": 12,
+      "capture_import_source": 6,
+      "capture_string_literal": 6,
+      "export_statement": 1,
+      "capture_export_statement": 1,
+      "call_expression": 2,
+      "capture_call_expression_direct": 2,
+      "identifier": 2,
+      "capture_call_func_name": 2,
+      "class_declaration": 1,
+      "capture_class_definition": 1,
+      "type_identifier": 1,
+      "capture_class_name": 1,
+      "class_body": 1,
+      "capture_class_body": 1,
+      "method_definition": 2,
+      "capture_method_definition": 2,
+      "property_identifier": 2,
+      "capture_method_name": 2,
+      "formal_parameters": 2,
+      "capture_method_params": 2,
+      "type_annotation": 3,
+      "capture_type_annotation": 3,
+      "statement_block": 2,
+      "capture_method_body": 2,
+      "number": 1,
+      "capture_number_literal": 1
+    }
+  },
+  "/twenty/packages/twenty-server/src/engine/core-modules/email/drivers/smtp.driver.ts": {
+    "filePath": "/twenty/packages/twenty-server/src/engine/core-modules/email/drivers/smtp.driver.ts",
+    "featureSets": {
+      "functionNames": [],
+      "classNames": [
+        "SmtpDriver"
+      ],
+      "methodNames": [
+        "SmtpDriver::constructor",
+        "SmtpDriver::send"
+      ],
+      "classPropNames": [
+        "logger",
+        "transport"
+      ],
+      "interfaceNames": [],
+      "typeAliasNames": [],
+      "enumNames": [],
+      "variableNames": [],
+      "assignTargets": [
+        "this.transport"
+      ],
+      "callFuncNames": [
+        "createTransport"
+      ],
+      "callMethodNames": [
+        "sendMail",
+        "then",
+        "log",
+        "catch",
+        "error"
+      ],
+      "callObjectTargets": [
+        "this.transport",
+        "this.transport\r\n      .sendMail(sendMailOptions)",
+        "this.transport\r\n      .sendMail(sendMailOptions)\r\n      .then(() =>\r\n        this.logger.log(`Email to '${sendMailOptions.to}' successfully sent`),\r\n      )",
+        "this.logger"
+      ],
+      "importSources": [
+        "'@nestjs/common'",
+        "'nodemailer'",
+        "'nodemailer/lib/smtp-connection'",
+        "'src/engine/core-modules/email/drivers/interfaces/email-driver.interface'"
+      ],
+      "stringLiterals": [
+        "'@nestjs/common'",
+        "'nodemailer'",
+        "'nodemailer/lib/smtp-connection'",
+        "'src/engine/core-modules/email/drivers/interfaces/email-driver.interface'"
+      ]
+    },
+    "nodeCounts": {
+      "import_statement": 4,
+      "capture_import_statement": 4,
+      "string": 8,
+      "capture_import_source": 4,
+      "capture_string_literal": 4,
+      "export_statement": 1,
+      "capture_export_statement": 1,
+      "class_declaration": 1,
+      "capture_class_definition": 1,
+      "type_identifier": 1,
+      "capture_class_name": 1,
+      "class_body": 1,
+      "capture_class_body": 1,
+      "public_field_definition": 2,
+      "capture_class_property": 2,
+      "property_identifier": 9,
+      "capture_class_prop_name": 2,
+      "type_annotation": 4,
+      "capture_type_annotation": 4,
+      "method_definition": 2,
+      "capture_method_definition": 2,
+      "capture_method_name": 2,
+      "formal_parameters": 2,
+      "capture_method_params": 2,
+      "statement_block": 2,
+      "capture_method_body": 2,
+      "assignment_expression": 1,
+      "capture_assignment": 1,
+      "member_expression": 4,
+      "capture_assign_target": 1,
+      "call_expression": 9,
+      "capture_assign_value": 1,
+      "capture_call_expression_direct": 1,
+      "identifier": 1,
+      "capture_call_func_name": 1,
+      "capture_call_expression_member": 5,
+      "capture_call_object": 5,
+      "capture_call_method_name": 5
+    }
+  },
+  "/twenty/packages/twenty-server/src/engine/core-modules/email/drivers/logger.driver.ts": {
+    "filePath": "/twenty/packages/twenty-server/src/engine/core-modules/email/drivers/logger.driver.ts",
+    "featureSets": {
+      "functionNames": [],
+      "classNames": [
+        "LoggerDriver"
+      ],
+      "methodNames": [
+        "LoggerDriver::send"
+      ],
+      "classPropNames": [
+        "logger"
+      ],
+      "interfaceNames": [],
+      "typeAliasNames": [],
+      "enumNames": [],
+      "variableNames": [
+        "info"
+      ],
+      "assignTargets": [],
+      "callFuncNames": [],
+      "callMethodNames": [
+        "log"
+      ],
+      "callObjectTargets": [
+        "this.logger"
+      ],
+      "importSources": [
+        "'@nestjs/common'",
+        "'nodemailer'",
+        "'src/engine/core-modules/email/drivers/interfaces/email-driver.interface'"
+      ],
+      "stringLiterals": [
+        "'@nestjs/common'",
+        "'nodemailer'",
+        "'src/engine/core-modules/email/drivers/interfaces/email-driver.interface'"
+      ]
+    },
+    "nodeCounts": {
+      "import_statement": 3,
+      "capture_import_statement": 3,
+      "string": 6,
+      "capture_import_source": 3,
+      "capture_string_literal": 3,
+      "export_statement": 1,
+      "capture_export_statement": 1,
+      "class_declaration": 1,
+      "capture_class_definition": 1,
+      "type_identifier": 1,
+      "capture_class_name": 1,
+      "class_body": 1,
+      "capture_class_body": 1,
+      "public_field_definition": 1,
+      "capture_class_property": 1,
+      "property_identifier": 3,
+      "capture_class_prop_name": 1,
+      "method_definition": 1,
+      "capture_method_definition": 1,
+      "capture_method_name": 1,
+      "formal_parameters": 1,
+      "capture_method_params": 1,
+      "type_annotation": 2,
+      "capture_type_annotation": 2,
+      "statement_block": 1,
+      "capture_method_body": 1,
+      "lexical_declaration": 1,
+      "capture_variable_declaration": 1,
+      "identifier": 1,
+      "capture_variable_name": 1,
+      "call_expression": 1,
+      "capture_call_expression_member": 1,
+      "member_expression": 1,
+      "capture_call_object": 1,
+      "capture_call_method_name": 1
+    }
+  },
+  "/twenty/packages/twenty-server/src/engine/core-modules/email/drivers/interfaces/email-driver.interface.ts": {
+    "filePath": "/twenty/packages/twenty-server/src/engine/core-modules/email/drivers/interfaces/email-driver.interface.ts",
+    "featureSets": {
+      "functionNames": [],
+      "classNames": [],
+      "methodNames": [],
+      "classPropNames": [],
+      "interfaceNames": [
+        "EmailDriver"
+      ],
+      "typeAliasNames": [],
+      "enumNames": [],
+      "variableNames": [],
+      "assignTargets": [],
+      "callFuncNames": [],
+      "callMethodNames": [],
+      "callObjectTargets": [],
+      "importSources": [
+        "'nodemailer'"
+      ],
+      "stringLiterals": [
+        "'nodemailer'"
+      ]
+    },
+    "nodeCounts": {
+      "import_statement": 1,
+      "capture_import_statement": 1,
+      "string": 2,
+      "capture_import_source": 1,
+      "capture_string_literal": 1,
+      "export_statement": 1,
+      "capture_export_statement": 1,
+      "interface_declaration": 1,
+      "capture_interface_definition": 1,
+      "type_identifier": 1,
+      "capture_interface_name": 1,
+      "type_annotation": 2,
+      "capture_type_annotation": 2
+    }
+  }
+}
