@@ -1,0 +1,16 @@
+{
+  "name": "ast-graph",
+  "version": "1.0.0",
+  "description": "AST Graph",
+  "main": "feature-extraction.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Nikhil",
+  "license": "ISC",
+  "dependencies": {
+    "tree-sitter": "^0.22.4",
+    "tree-sitter-typescript": "^0.23.2"
+  }
+}
