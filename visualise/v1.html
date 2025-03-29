@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cluster Similarity Graph</title>
+<script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+<style>
+  body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  #cy {
+    width: 100%;
+    height: 95vh; /* Adjust height as needed */
+    display: block;
+    border: 1px solid #ccc;
+  }
+  h1 {
+      text-align: center;
+      font-size: 1.5em;
+      margin: 10px 0;
+  }
+</style>
+</head>
+<body>
+
+<h1>Cluster 33 Similarity Visualization</h1>
+<div id="cy"></div>
+
+<script>
+  // Update the path to point to the correct location of the JSON file
+  fetch('../cluster_33_similarity_edges.json')  // Go up one directory to find the JSON file
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(similarityData => {
+      // Optional: Filter edges below a certain threshold to simplify the graph
+      const similarityThreshold = 0.1; // Adjust as needed (e.g., 0.0 to show all)
+      const filteredData = similarityData.filter(edge => edge.similarity >= similarityThreshold);
+
+      // --- 2. Transform Data for Cytoscape ---
+      const elements = [];
+      const nodes = new Set(); // Use a Set to automatically handle unique file paths
+
+      filteredData.forEach(edge => {
+        // Add nodes if they haven't been added yet
+        nodes.add(edge.fileA);
+        nodes.add(edge.fileB);
+
+        // Add the edge
+        elements.push({
+          group: 'edges',
+          data: {
+            id: `edge-${edge.fileA}-${edge.fileB}`, // Unique edge ID
+            source: edge.fileA, // ID of the source node
+            target: edge.fileB, // ID of the target node
+            similarity: edge.similarity // Store similarity score in edge data
+          }
+        });
+      });
+
+      // Convert the Set of nodes into Cytoscape node elements
+      nodes.forEach(filePath => {
+        // Extract just the filename for the label
+        const filename = filePath.split('/').pop();
+        elements.push({
+          group: 'nodes',
+          data: {
+            id: filePath, // Use the full path as the unique ID
+            label: filename // Use just the filename for display
+          }
+        });
+      });
+
+      // --- 3. Initialize Cytoscape ---
+      var cy = cytoscape({
+        container: document.getElementById('cy'), // container to render in
+
+        elements: elements, // List of graph elements (nodes & edges)
+
+        style: [ // Stylesheet for the graph
+          {
+            selector: 'node',
+            style: {
+              'background-color': '#666',
+              'label': 'data(label)', // Display the filename
+              'font-size': '10px',
+               'text-valign': 'bottom',
+               'text-halign': 'center',
+               'text-margin-y': '3px',
+               'color': '#ffffff' // Label color
+            }
+          },
+          {
+            selector: 'edge',
+            style: {
+              'width': 'mapData(similarity, 0, 1, 1, 10)', // Map similarity (0-1) to width (1px-10px)
+              'line-color': '#ccc',
+              'curve-style': 'bezier', // Makes edges curves
+              'target-arrow-color': '#ccc',
+              'target-arrow-shape': 'none' // No arrows for undirected similarity
+            }
+          }
+        ],
+
+        layout: {
+          name: 'cose', // Concentric Cosine layout - good for networks
+          idealEdgeLength: 100,
+          nodeOverlap: 20,
+          refresh: 20,
+          fit: true,
+          padding: 30,
+          randomize: false,
+          componentSpacing: 100,
+          nodeRepulsion: 400000,
+          edgeElasticity: 100,
+          nestingFactor: 5,
+          gravity: 80,
+          numIter: 1000,
+          initialTemp: 200,
+          coolingFactor: 0.95,
+          minTemp: 1.0
+        }
+      });
+
+      // Optional: Add simple interaction (e.g., log node data on tap)
+      cy.on('tap', 'node', function(evt){
+        var node = evt.target;
+        console.log('Tapped node: ' + node.id());
+        console.log('Label: ' + node.data('label'));
+      });
+
+      cy.on('tap', 'edge', function(evt){
+        var edge = evt.target;
+        console.log(`Tapped edge between ${edge.source().id()} and ${edge.target().id()}`);
+        console.log('Similarity: ' + edge.data('similarity'));
+      });
+    })
+    .catch(error => {
+      console.error('Error loading similarity data:', error);
+      document.getElementById('cy').innerHTML = `Error loading data: ${error.message}`;  // Show error on page
+    });
+</script>
+
+</body>
+</html>

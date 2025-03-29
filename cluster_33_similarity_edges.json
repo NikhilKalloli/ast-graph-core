@@ -2,27 +2,27 @@
   {
     "fileA": "/twenty/packages/twenty-server/src/engine/core-modules/email/email-sender.service.ts",
     "fileB": "/twenty/packages/twenty-server/src/engine/core-modules/email/email.module.ts",
-    "similarity": 0.2612
+    "similarity": 0.2602
   },
   {
     "fileA": "/twenty/packages/twenty-server/src/engine/core-modules/email/email-sender.service.ts",
     "fileB": "/twenty/packages/twenty-server/src/engine/core-modules/email/email.service.ts",
-    "similarity": 0.3176
+    "similarity": 0.3165
   },
   {
     "fileA": "/twenty/packages/twenty-server/src/engine/core-modules/email/email-sender.service.ts",
     "fileB": "/twenty/packages/twenty-server/src/engine/core-modules/email/drivers/smtp.driver.ts",
-    "similarity": 0.378
+    "similarity": 0.3782
   },
   {
     "fileA": "/twenty/packages/twenty-server/src/engine/core-modules/email/email-sender.service.ts",
     "fileB": "/twenty/packages/twenty-server/src/engine/core-modules/email/drivers/logger.driver.ts",
-    "similarity": 0.4495
+    "similarity": 0.4496
   },
   {
     "fileA": "/twenty/packages/twenty-server/src/engine/core-modules/email/email-sender.service.ts",
     "fileB": "/twenty/packages/twenty-server/src/engine/core-modules/email/drivers/interfaces/email-driver.interface.ts",
-    "similarity": 0.2239
+    "similarity": 0.2255
   },
   {
     "fileA": "/twenty/packages/twenty-server/src/engine/core-modules/email/email.module.ts",
@@ -32,12 +32,12 @@
   {
     "fileA": "/twenty/packages/twenty-server/src/engine/core-modules/email/email.module.ts",
     "fileB": "/twenty/packages/twenty-server/src/engine/core-modules/email/drivers/smtp.driver.ts",
-    "similarity": 0.175
+    "similarity": 0.1749
   },
   {
     "fileA": "/twenty/packages/twenty-server/src/engine/core-modules/email/email.module.ts",
     "fileB": "/twenty/packages/twenty-server/src/engine/core-modules/email/drivers/logger.driver.ts",
-    "similarity": 0.2247
+    "similarity": 0.2224
   },
   {
     "fileA": "/twenty/packages/twenty-server/src/engine/core-modules/email/email.module.ts",
@@ -47,12 +47,12 @@
   {
     "fileA": "/twenty/packages/twenty-server/src/engine/core-modules/email/email.service.ts",
     "fileB": "/twenty/packages/twenty-server/src/engine/core-modules/email/drivers/smtp.driver.ts",
-    "similarity": 0.23
+    "similarity": 0.2298
   },
   {
     "fileA": "/twenty/packages/twenty-server/src/engine/core-modules/email/email.service.ts",
     "fileB": "/twenty/packages/twenty-server/src/engine/core-modules/email/drivers/logger.driver.ts",
-    "similarity": 0.283
+    "similarity": 0.2809
   },
   {
     "fileA": "/twenty/packages/twenty-server/src/engine/core-modules/email/email.service.ts",
@@ -62,16 +62,16 @@
   {
     "fileA": "/twenty/packages/twenty-server/src/engine/core-modules/email/drivers/smtp.driver.ts",
     "fileB": "/twenty/packages/twenty-server/src/engine/core-modules/email/drivers/logger.driver.ts",
-    "similarity": 0.4557
+    "similarity": 0.4556
   },
   {
     "fileA": "/twenty/packages/twenty-server/src/engine/core-modules/email/drivers/smtp.driver.ts",
     "fileB": "/twenty/packages/twenty-server/src/engine/core-modules/email/drivers/interfaces/email-driver.interface.ts",
-    "similarity": 0.188
+    "similarity": 0.1896
   },
   {
     "fileA": "/twenty/packages/twenty-server/src/engine/core-modules/email/drivers/logger.driver.ts",
     "fileB": "/twenty/packages/twenty-server/src/engine/core-modules/email/drivers/interfaces/email-driver.interface.ts",
-    "similarity": 0.2552
+    "similarity": 0.2568
   }
 ]

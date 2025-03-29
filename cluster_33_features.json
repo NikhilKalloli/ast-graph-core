@@ -37,6 +37,9 @@
         "'nodemailer'",
         "'src/engine/core-modules/email/drivers/interfaces/email-driver.interface'",
         "'src/engine/core-modules/email/email.constants'"
+      ],
+      "implementedInterfaces": [
+        "EmailDriver"
       ]
     },
     "nodeCounts": {
@@ -53,8 +56,9 @@
       "capture_call_func_name": 2,
       "class_declaration": 1,
       "capture_class_definition": 1,
-      "type_identifier": 1,
+      "type_identifier": 2,
       "capture_class_name": 1,
+      "capture_implemented_interface_name": 1,
       "class_body": 1,
       "capture_class_body": 1,
       "method_definition": 2,
@@ -118,7 +122,8 @@
         "'src/engine/core-modules/email/drivers/smtp.driver'",
         "'src/engine/core-modules/email/email.service'",
         "'src/engine/core-modules/email/email-sender.service'"
-      ]
+      ],
+      "implementedInterfaces": []
     },
     "nodeCounts": {
       "import_statement": 7,
@@ -194,7 +199,8 @@
         "'src/engine/core-modules/message-queue/decorators/message-queue.decorator'",
         "'src/engine/core-modules/message-queue/message-queue.constants'",
         "'src/engine/core-modules/message-queue/services/message-queue.service'"
-      ]
+      ],
+      "implementedInterfaces": []
     },
     "nodeCounts": {
       "import_statement": 6,
@@ -277,6 +283,9 @@
         "'nodemailer'",
         "'nodemailer/lib/smtp-connection'",
         "'src/engine/core-modules/email/drivers/interfaces/email-driver.interface'"
+      ],
+      "implementedInterfaces": [
+        "EmailDriver"
       ]
     },
     "nodeCounts": {
@@ -289,8 +298,9 @@
       "capture_export_statement": 1,
       "class_declaration": 1,
       "capture_class_definition": 1,
-      "type_identifier": 1,
+      "type_identifier": 2,
       "capture_class_name": 1,
+      "capture_implemented_interface_name": 1,
       "class_body": 1,
       "capture_class_body": 1,
       "public_field_definition": 2,
@@ -356,6 +366,9 @@
         "'@nestjs/common'",
         "'nodemailer'",
         "'src/engine/core-modules/email/drivers/interfaces/email-driver.interface'"
+      ],
+      "implementedInterfaces": [
+        "EmailDriver"
       ]
     },
     "nodeCounts": {
@@ -368,8 +381,9 @@
       "capture_export_statement": 1,
       "class_declaration": 1,
       "capture_class_definition": 1,
-      "type_identifier": 1,
+      "type_identifier": 2,
       "capture_class_name": 1,
+      "capture_implemented_interface_name": 1,
       "class_body": 1,
       "capture_class_body": 1,
       "public_field_definition": 1,
@@ -418,7 +432,8 @@
       ],
       "stringLiterals": [
         "'nodemailer'"
-      ]
+      ],
+      "implementedInterfaces": []
     },
     "nodeCounts": {
       "import_statement": 1,

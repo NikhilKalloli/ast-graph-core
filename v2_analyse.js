@@ -75,6 +75,7 @@ async function parseFileAndExtractFeatures(filePath) {
         enumNames: new Set(), variableNames: new Set(), assignTargets: new Set(),
         callFuncNames: new Set(), callMethodNames: new Set(), callObjectTargets: new Set(),
         importSources: new Set(), stringLiterals: new Set(),
+        implementedInterfaces: new Set(),
       },
       nodeCounts: {},
       // detailedCaptures: [] // Optionally keep detailed list if needed elsewhere
@@ -130,6 +131,9 @@ async function parseFileAndExtractFeatures(filePath) {
          case 'string_literal':
            try { if(fullText.length < 100 && fullText.length > 2) fileFeatures.featureSets.stringLiterals.add(JSON.parse(fullText)); } // Limit string literal length and ignore empty strings ""
            catch(e) { if(fullText.length < 100 && fullText.length > 2) fileFeatures.featureSets.stringLiterals.add(fullText); } break;
+         case 'implemented_interface_name':
+           fileFeatures.featureSets.implementedInterfaces.add(fullText);
+           break;
        }
     }
 

@@ -3,113 +3,239 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cluster Similarity Graph</title>
+<title>Cluster Similarity Graph with Features</title>
 <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
 <style>
   body {
     font-family: sans-serif;
     margin: 0;
     padding: 0;
+    display: flex; /* Use flexbox for layout */
+    height: 100vh;
+    flex-direction: column; /* Stack items vertically */
+    background-color: #111827; /* Dark background */
+  }
+  #controls {
+      padding: 10px;
+      background-color: #1f2937; /* Darker gray for controls */
+      border-bottom: 1px solid #374151;
   }
   #cy {
+    flex-grow: 1; /* Let the graph take remaining space */
     width: 100%;
-    height: 95vh; /* Adjust height as needed */
     display: block;
-    border: 1px solid #ccc;
+    border-top: 1px solid #374151; /* Add border for separation */
+    background-color: #111827; /* Dark background for graph area */
   }
   h1 {
       text-align: center;
       font-size: 1.5em;
-      margin: 10px 0;
+      margin: 0 0 10px 0;
+      color: #f3f4f6; /* Light text for dark background */
+  }
+  #info-panel {
+      position: fixed; /* Or absolute depending on desired behavior */
+      top: 60px; /* Adjust as needed */
+      right: 10px;
+      width: 300px; /* Adjust width */
+      max-height: 80vh; /* Limit height */
+      overflow-y: auto; /* Add scroll if content overflows */
+      background-color: rgba(31, 41, 55, 0.95); /* Dark semi-transparent background */
+      border: 1px solid #374151;
+      padding: 10px;
+      font-size: 12px;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+      display: none; /* Hidden by default */
+      z-index: 10; /* Ensure it's above the graph */
+      color: #f3f4f6; /* Light text */
+  }
+   #info-panel h3 {
+       margin-top: 0;
+       font-size: 1.1em;
+       border-bottom: 1px solid #374151;
+       padding-bottom: 5px;
+       color: #10b981; /* Green heading */
+   }
+   #info-panel ul {
+       list-style-type: none;
+       padding-left: 5px;
+       margin-top: 5px;
+   }
+    #info-panel li {
+       margin-bottom: 3px;
+       word-break: break-all; /* Prevent long names from overflowing */
+   }
+   #info-panel .feature-type {
+       font-weight: bold;
+       margin-top: 8px;
+       color: #60a5fa; /* Blue feature type headers */
+   }
+   #info-panel .no-common {
+        font-style: italic;
+        color: #6b7280; /* Lighter gray for "None" text */
+   }
+  .slider-container {
+    text-align: center;
+    padding: 10px;
+    color: #f3f4f6;
+  }
+
+  .slider-container label {
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  input[type="range"] {
+    width: 200px;
+    height: 8px;
+    background: #374151;
+    outline: none;
+    opacity: 0.7;
+    transition: opacity .2s;
+    border-radius: 4px;
+  }
+
+  input[type="range"]:hover {
+    opacity: 1;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #10b981;
+    cursor: pointer;
+    border-radius: 50%;
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: #10b981;
+    cursor: pointer;
+    border-radius: 50%;
   }
 </style>
 </head>
 <body>
 
-<h1>Cluster 33 Similarity Visualization</h1>
+<div id="controls">
+    <h1>Cluster 33 Similarity Visualization</h1>
+    <div class="slider-container">
+        <label for="threshold">Similarity Threshold: <span id="threshold-value">0.2</span></label>
+        <input type="range" id="threshold" min="0" max="1" step="0.05" value="0.2">
+    </div>
+</div>
+
 <div id="cy"></div>
+<div id="info-panel"></div> <!-- Panel to display common features -->
 
 <script>
-  // Update the path to point to the correct location of the JSON file
-  fetch('../cluster_33_similarity_edges.json')  // Go up one directory to find the JSON file
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+  // --- Helper Function to Find Common Elements ---
+  // *** ADDED THIS FUNCTION DEFINITION ***
+  function findCommonElements(arrA = [], arrB = []) {
+      // Ensure inputs are treated as arrays, even if null/undefined
+      const arrayA = Array.isArray(arrA) ? arrA : [];
+      const arrayB = Array.isArray(arrB) ? arrB : [];
+
+      const setB = new Set(arrayB);
+      const common = new Set();
+      for (const item of arrayA) {
+          if (setB.has(item)) {
+              common.add(item);
+          }
       }
-      return response.json();
-    })
-    .then(similarityData => {
-      // Optional: Filter edges below a certain threshold to simplify the graph
-      const similarityThreshold = 0.1; // Adjust as needed (e.g., 0.0 to show all)
-      const filteredData = similarityData.filter(edge => edge.similarity >= similarityThreshold);
+      return Array.from(common);
+  }
 
-      // --- 2. Transform Data for Cytoscape ---
-      const elements = [];
-      const nodes = new Set(); // Use a Set to automatically handle unique file paths
+  // Create a function to update the visualization
+  function updateVisualization(similarityData, clusterFeatures, threshold) {
+    // Filter edges based on threshold
+    const filteredData = similarityData.filter(edge => edge.similarity >= threshold);
+    console.log(`Filtered edges: ${filteredData.length} (threshold: ${threshold})`);
 
-      filteredData.forEach(edge => {
-        // Add nodes if they haven't been added yet
-        nodes.add(edge.fileA);
-        nodes.add(edge.fileB);
+    // Transform Data for Cytoscape
+    const elements = [];
+    const nodes = new Set();
 
-        // Add the edge
-        elements.push({
-          group: 'edges',
-          data: {
-            id: `edge-${edge.fileA}-${edge.fileB}`, // Unique edge ID
-            source: edge.fileA, // ID of the source node
-            target: edge.fileB, // ID of the target node
-            similarity: edge.similarity // Store similarity score in edge data
-          }
-        });
+    filteredData.forEach(edge => {
+      nodes.add(edge.fileA);
+      nodes.add(edge.fileB);
+      elements.push({
+        group: 'edges',
+        data: {
+          id: `edge-${edge.fileA}-${edge.fileB}`,
+          source: edge.fileA,
+          target: edge.fileB,
+          similarity: edge.similarity
+        }
       });
+    });
 
-      // Convert the Set of nodes into Cytoscape node elements
-      nodes.forEach(filePath => {
-        // Extract just the filename for the label
-        const filename = filePath.split('/').pop();
-        elements.push({
-          group: 'nodes',
-          data: {
-            id: filePath, // Use the full path as the unique ID
-            label: filename // Use just the filename for display
-          }
-        });
+    nodes.forEach(filePath => {
+      const filename = filePath.split('/').pop();
+      elements.push({
+        group: 'nodes',
+        data: {
+          id: filePath,
+          label: filename
+        }
       });
+    });
 
-      // --- 3. Initialize Cytoscape ---
-      var cy = cytoscape({
-        container: document.getElementById('cy'), // container to render in
-
-        elements: elements, // List of graph elements (nodes & edges)
-
-        style: [ // Stylesheet for the graph
-          {
-            selector: 'node',
-            style: {
-              'background-color': '#666',
-              'label': 'data(label)', // Display the filename
-              'font-size': '10px',
-               'text-valign': 'bottom',
-               'text-halign': 'center',
-               'text-margin-y': '3px',
-               'color': '#ffffff' // Label color
-            }
-          },
-          {
-            selector: 'edge',
-            style: {
-              'width': 'mapData(similarity, 0, 1, 1, 10)', // Map similarity (0-1) to width (1px-10px)
-              'line-color': '#ccc',
-              'curve-style': 'bezier', // Makes edges curves
-              'target-arrow-color': '#ccc',
-              'target-arrow-shape': 'none' // No arrows for undirected similarity
-            }
+    // Initialize or update Cytoscape
+    return cytoscape({
+      container: document.getElementById('cy'),
+      elements: elements,
+      style: [
+        {
+          selector: 'node',
+          style: {
+            'background-color': '#10b981', // Emerald green nodes
+            'label': 'data(label)',
+            'font-size': '11px',
+            'text-valign': 'bottom',
+            'text-halign': 'center',
+            'text-margin-y': '5px',
+            'color': '#f3f4f6', // Light text color
+            'width': '22px',
+            'height': '22px',
+            'text-outline-color': '#111827', // Dark background color
+            'text-outline-width': '2px', // Text outline for better readability
+            'font-weight': '500'
           }
-        ],
-
-        layout: {
-          name: 'cose', // Concentric Cosine layout - good for networks
+        },
+        {
+          selector: 'edge',
+          style: {
+            'width': 'mapData(similarity, 0, 1, 1, 8)',
+            'line-color': '#60a5fa', // Blue edges
+            'curve-style': 'bezier',
+            'opacity': 0.6, // Slightly transparent edges
+            'target-arrow-color': '#60a5fa',
+            'target-arrow-shape': 'none'
+          }
+        },
+        {
+          selector: 'node:selected',
+          style: {
+            'background-color': '#f59e0b', // Yellow-orange for selected nodes
+            'border-width': '2px',
+            'border-color': '#f3f4f6'
+          }
+        },
+        {
+          selector: 'edge:selected',
+          style: {
+            'line-color': '#f59e0b', // Yellow-orange for selected edges
+            'opacity': 1,
+            'width': 'mapData(similarity, 0, 1, 2, 10)' // Slightly thicker when selected
+          }
+        }
+      ],
+      layout: {
+          name: 'cose', // cose layout is generally good for networks
           idealEdgeLength: 100,
           nodeOverlap: 20,
           refresh: 20,
@@ -126,25 +252,156 @@
           coolingFactor: 0.95,
           minTemp: 1.0
         }
+    });
+  }
+
+  // Load data and initialize visualization
+  Promise.all([
+    fetch('../cluster_33_similarity_edges.json')
+      .then(response => {
+        if (!response.ok) throw new Error(`Edges file error! status: ${response.status}`);
+        return response.json();
+      }),
+    fetch('../cluster_33_features.json')
+      .then(response => {
+        if (!response.ok) throw new Error(`Features file error! status: ${response.status}`);
+        return response.json();
+      })
+  ])
+  .then(([similarityData, clusterFeatures]) => {
+    console.log("Data loaded successfully.");
+
+    let cy; // Declare cy in this scope so we can access it later
+    const thresholdSlider = document.getElementById('threshold');
+    const thresholdValue = document.getElementById('threshold-value');
+
+    // Function to update threshold display
+    function updateThresholdDisplay(value) {
+      thresholdValue.textContent = parseFloat(value).toFixed(2);
+    }
+
+    // Initialize visualization with default threshold
+    cy = updateVisualization(similarityData, clusterFeatures, thresholdSlider.value);
+
+    // Add slider event listener
+    thresholdSlider.addEventListener('input', (event) => {
+      const newThreshold = parseFloat(event.target.value);
+      updateThresholdDisplay(newThreshold);
+      
+      // Destroy existing cy instance
+      if (cy) {
+        cy.destroy();
+      }
+      
+      // Create new visualization with updated threshold
+      cy = updateVisualization(similarityData, clusterFeatures, newThreshold);
+
+      // Reattach event listeners
+      attachEventListeners(cy, clusterFeatures);
+    });
+
+    // Function to attach event listeners
+    function attachEventListeners(cy, clusterFeatures) {
+      // Edge click listener
+      cy.on('tap', 'edge', function(evt){
+        console.log("Edge tapped."); // Debug log
+        const edge = evt.target;
+        const fileA_id = edge.source().id();
+        const fileB_id = edge.target().id();
+        const similarity = edge.data('similarity');
+
+        console.log(`File A: ${fileA_id}`);
+        console.log(`File B: ${fileB_id}`);
+
+        const featuresA = clusterFeatures[fileA_id];
+        const featuresB = clusterFeatures[fileB_id];
+
+        let panelContent = `<h3>Common Features</h3>`;
+        panelContent += `<p>Between: <br><i>${fileA_id}</i> <br>and <br><i>${fileB_id}</i></p>`;
+        panelContent += `<p>Similarity: ${similarity.toFixed(4)}</p>`;
+        panelContent += `<hr>`;
+
+        if (!featuresA || !featuresB) {
+          console.error("Feature data missing for one or both files.");
+          panelContent += "<p style='color: red;'>Error: Feature data missing for one or both files.</p>";
+        } else {
+          // Define which feature sets to compare
+          const featuresToCompare = [
+            { key: 'importSources', label: 'Import Sources' },
+            { key: 'functionNames', label: 'Functions Defined' },
+            { key: 'classNames', label: 'Classes Defined' },
+            { key: 'methodNames', label: 'Methods Defined (Qualified)' },
+            { key: 'interfaceNames', label: 'Interfaces Defined' },
+            { key: 'implementedInterfaces', label: 'Interfaces Implemented' },
+            { key: 'callFuncNames', label: 'Function Calls' },
+            { key: 'callMethodNames', label: 'Method Calls' },
+            { key: 'variableNames', label: 'Variable Names' },
+            { key: 'stringLiterals', label: 'String Literals (Short)' }
+          ];
+
+          let commonFoundOverall = false;
+          featuresToCompare.forEach(featureInfo => {
+            // Pass the arrays directly from the loaded features object
+            const commonItems = findCommonElements(
+              featuresA.featureSets[featureInfo.key],
+              featuresB.featureSets[featureInfo.key]
+            );
+
+            panelContent += `<div class="feature-type">${featureInfo.label}:</div>`;
+            if (commonItems.length > 0) {
+              commonFoundOverall = true;
+              panelContent += `<ul>`;
+              // Sort common items alphabetically for consistent display
+              commonItems.sort().forEach(item => {
+                // Basic escaping for potentially problematic characters in names/strings
+                const escapedItem = String(item).replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>');
+                panelContent += `<li>${escapedItem}</li>`;
+              });
+              panelContent += `</ul>`;
+            } else {
+              panelContent += `<div class="no-common">None</div>`;
+            }
+          });
+        }
+
+        document.getElementById('info-panel').innerHTML = panelContent;
+        document.getElementById('info-panel').style.display = 'block';
+        console.log("Info panel updated.");
       });
 
-      // Optional: Add simple interaction (e.g., log node data on tap)
+      // Background click listener
+      cy.on('tap', function(event){
+        if(event.target === cy){
+          document.getElementById('info-panel').style.display = 'none';
+        }
+      });
+
+      // Node click listener
       cy.on('tap', 'node', function(evt){
         var node = evt.target;
-        console.log('Tapped node: ' + node.id());
-        console.log('Label: ' + node.data('label'));
+        const filePath = node.id();
+        console.log('Tapped node: ' + filePath);
+        
+        // Remove '/twenty' prefix and construct GitHub URL
+        const githubBasePath = 'https://github.com/twentyhq/twenty/blob/main';
+        const githubPath = filePath.replace('/twenty', '');
+        const githubUrl = `${githubBasePath}${githubPath}`;
+        
+        // Open in new tab
+        window.open(githubUrl, '_blank');
       });
+    }
 
-      cy.on('tap', 'edge', function(evt){
-        var edge = evt.target;
-        console.log(`Tapped edge between ${edge.source().id()} and ${edge.target().id()}`);
-        console.log('Similarity: ' + edge.data('similarity'));
-      });
-    })
-    .catch(error => {
-      console.error('Error loading similarity data:', error);
-      document.getElementById('cy').innerHTML = `Error loading data: ${error.message}`;  // Show error on page
-    });
+    // Attach initial event listeners
+    attachEventListeners(cy, clusterFeatures);
+  })
+  .catch(error => {
+    console.error('Error processing data:', error);
+    const cyContainer = document.getElementById('cy');
+    if (cyContainer) {
+      cyContainer.innerHTML = `<p style="color: red; padding: 20px;">Error loading or processing data: ${error.message}. Check browser console for details and verify JSON file paths.</p>`;
+    }
+  });
 </script>
 
 </body>
