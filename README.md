@@ -10,18 +10,14 @@ This project analyzes TypeScript/JavaScript code files by:
 3. Computing similarity between files
 4. Visualizing relationships in an interactive graph
 
-Currently analyzing: **Cluster 33** from Twenty CRM's codebase (https://github.com/twentyhq/twenty)
+Currently analyzing: **Cluster 33** from Twenty CRM's [codebase](https://github.com/twentyhq/twenty)
 
 ## Installation
 
 ```bash
-# Install dependencies
 npm install tree-sitter tree-sitter-typescript --legacy-peer-deps
 ```
 
-## Project Structure 
-
-## AST Analysis
 
 ### Feature Extraction
 
@@ -113,11 +109,7 @@ The visualization is built using Cytoscape.js and provides:
    - Range: 0 to 1 with 0.05 steps
    - Default: 0.2
 
-2. **Node Clicks**
-   - Opens corresponding file on GitHub
-   - Base path: `https://github.com/twentyhq/twenty/blob/main`
-
-3. **Edge Clicks**
+2. **Edge Clicks**
    - Shows detailed feature comparison panel
    - Lists common elements between files:
      - Import Sources
@@ -131,13 +123,4 @@ The visualization is built using Cytoscape.js and provides:
      - Variables
      - String Literals
 
-## Output Files
-
-1. `cluster_33_features.json`
-   - Contains extracted features for each file
-   - Used for detailed comparison
-
-2. `cluster_33_similarity_edges.json`
-   - Contains pairwise similarity scores
-   - Used for graph visualization
 
