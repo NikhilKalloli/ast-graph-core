@@ -10,6 +10,8 @@
   "author": "Nikhil",
   "license": "ISC",
   "dependencies": {
+    "pg": "^8.14.1",
+    "readline": "^1.3.0",
     "tree-sitter": "^0.22.4",
     "tree-sitter-typescript": "^0.23.2"
   }
