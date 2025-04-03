@@ -147,18 +147,61 @@ function parseCSVLine(line) {
   return result;
 }
 
+async function verifyData() {
+  const client = await pool.connect();
+  try {
+    console.log('Verifying data in ast_flat table...');
+    
+    // Check record count
+    const countResult = await client.query('SELECT COUNT(*) FROM ast_flat');
+    console.log(`Total records in ast_flat: ${countResult.rows[0].count}`);
+    
+    // Check sample data
+    const sampleResult = await client.query('SELECT * FROM ast_flat LIMIT 5');
+    console.log('Sample data from ast_flat:');
+    console.log(sampleResult.rows);
+    
+    // Create the join table
+    console.log('Creating ast_flat_join table...');
+    await client.query(`
+      DROP TABLE IF EXISTS ast_flat_join;
+      CREATE TABLE ast_flat_join AS
+      SELECT 
+          a.filename as f1,
+          a.feature_value as type_value_1,
+          b.filename as f2,
+          b.feature_value as type_value_2
+      FROM ast_flat a 
+      JOIN ast_flat b ON (a.feature_value = b.feature_value)
+    `);
+    
+    // Verify join table
+    const joinCountResult = await client.query('SELECT COUNT(*) FROM ast_flat_join');
+    console.log(`Total records in ast_flat_join: ${joinCountResult.rows[0].count}`);
+    
+  } catch (error) {
+    console.error('Error verifying data:', error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 async function main() {
   try {
     // Create the table structure
-    await createTable();
+    // await createTable();
     
     // Import the CSV data
-    const csvFilePath = path.resolve(__dirname, 'ts_features.csv');
-    await importCSV(csvFilePath);
+    // const csvFilePath = path.resolve(__dirname, 'ts_features.csv');
+    // await importCSV(csvFilePath);
     
-    console.log('Data import completed successfully');
+    // Add verification step
+    await verifyData();
+    
+    console.log('Data import and verification completed successfully');
   } catch (error) {
-    console.error('Failed to import data:', error);
+    console.error('Failed to import/verify data:', error);
   } finally {
     // Close the pool
     await pool.end();

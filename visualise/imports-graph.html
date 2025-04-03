@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code Imports Visualization</title>
+<script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+<style>
+  body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    height: 100vh;
+    flex-direction: column;
+    background-color: #111827;
+  }
+  #controls {
+    padding: 10px;
+    background-color: #1f2937;
+    border-bottom: 1px solid #374151;
+  }
+  #cy {
+    flex-grow: 1;
+    width: 100%;
+    display: block;
+    background-color: #111827;
+  }
+  h1 {
+    text-align: center;
+    font-size: 1.5em;
+    margin: 0 0 10px 0;
+    color: #f3f4f6;
+  }
+  #info-panel {
+    position: fixed;
+    top: 60px;
+    right: 10px;
+    width: 300px;
+    background-color: rgba(31, 41, 55, 0.95);
+    border: 1px solid #374151;
+    padding: 10px;
+    color: #f3f4f6;
+    display: none;
+  }
+  .slider-container {
+    text-align: center;
+    padding: 10px;
+    color: #f3f4f6;
+  }
+  input[type="range"] {
+    width: 200px;
+  }
+</style>
+</head>
+<body>
+
+<div id="controls">
+    <h1>Code Imports Graph</h1>
+    <div class="slider-container">
+        <label for="threshold">Common Imports Threshold: <span id="threshold-value">10</span></label>
+        <input type="range" id="threshold" min="1" max="10" step="1" value="150">
+    </div>
+</div>
+
+<div id="cy"></div>
+<div id="info-panel"></div>
+
+<script>
+// Function to process CSV data and create graph
+function processImportsData(csvText) {
+    const lines = csvText.trim().split('\n');
+    const header = lines[0].split(',');
+    
+    // Create a map of file to its imports
+    const fileImports = new Map();
+    
+    lines.slice(1).forEach(line => {
+        const [file, featureType, importPath] = line.split(',').map(s => s.trim());
+        // Only process rows where Feature Type is 'importSources'
+        if (featureType === 'importSources') {
+            if (!fileImports.has(file)) {
+                fileImports.set(file, new Set());
+            }
+            // Clean up the import path by removing quotes and extra characters
+            const cleanImport = importPath.replace(/[']/g, '').trim();
+            fileImports.get(file).add(cleanImport);
+        }
+    });
+
+    // Calculate edges based on common imports
+    const edges = [];
+    const files = Array.from(fileImports.keys());
+    
+    for (let i = 0; i < files.length; i++) {
+        for (let j = i + 1; j < files.length; j++) {
+            const fileA = files[i];
+            const fileB = files[j];
+            const importsA = fileImports.get(fileA);
+            const importsB = fileImports.get(fileB);
+            
+            // Find common imports
+            const commonImports = new Set(
+                [...importsA].filter(x => importsB.has(x))
+            );
+            
+            if (commonImports.size > 0) {
+                edges.push({
+                    fileA,
+                    fileB,
+                    weight: commonImports.size,
+                    commonImports: Array.from(commonImports)
+                });
+            }
+        }
+    }
+
+    return {
+        nodes: files,
+        edges: edges,
+        fileImports: fileImports
+    };
+}
+
+function updateVisualization(graphData, threshold) {
+    const elements = [];
+    const nodes = new Set();
+
+    // Filter edges based on threshold
+    const filteredEdges = graphData.edges.filter(edge => edge.weight >= threshold);
+
+    // Save to JSON if threshold is 10
+    if (threshold === 10) {
+        const jsonOutput = {
+            edges: filteredEdges.map(edge => ({
+                source: edge.fileA,
+                target: edge.fileB,
+                weight: edge.weight,
+                commonImports: edge.commonImports
+            })),
+            nodes: Array.from(new Set(filteredEdges.flatMap(edge => [edge.fileA, edge.fileB])))
+        };
+
+        // Create download link for JSON
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(jsonOutput, null, 2));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", "graph_threshold_10.json");
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+    }
+
+    filteredEdges.forEach(edge => {
+        nodes.add(edge.fileA);
+        nodes.add(edge.fileB);
+        elements.push({
+            group: 'edges',
+            data: {
+                id: `edge-${edge.fileA}-${edge.fileB}`,
+                source: edge.fileA,
+                target: edge.fileB,
+                weight: edge.weight,
+                commonImports: edge.commonImports
+            }
+        });
+    });
+
+    nodes.forEach(file => {
+        const filename = file.split('/').pop();
+        elements.push({
+            group: 'nodes',
+            data: {
+                id: file,
+                label: filename,
+                imports: Array.from(graphData.fileImports.get(file))
+            }
+        });
+    });
+
+    return cytoscape({
+        container: document.getElementById('cy'),
+        elements: elements,
+        style: [
+            {
+                selector: 'node',
+                style: {
+                    'background-color': '#10b981',
+                    'label': 'data(label)',
+                    'font-size': '11px',
+                    'text-valign': 'bottom',
+                    'text-halign': 'center',
+                    'text-margin-y': '5px',
+                    'color': '#f3f4f6',
+                    'width': '22px',
+                    'height': '22px',
+                    'text-outline-color': '#111827',
+                    'text-outline-width': '2px'
+                }
+            },
+            {
+                selector: 'edge',
+                style: {
+                    'width': 'mapData(weight, 1, 10, 1, 8)',
+                    'line-color': '#60a5fa',
+                    'curve-style': 'bezier',
+                    'opacity': 0.6
+                }
+            }
+        ],
+        layout: {
+            name: 'cose',
+            idealEdgeLength: 100,
+            nodeOverlap: 20,
+            refresh: 20,
+            fit: true,
+            padding: 30,
+            randomize: false,
+            componentSpacing: 100,
+            nodeRepulsion: 400000,
+            edgeElasticity: 100,
+            nestingFactor: 5,
+            gravity: 80,
+            numIter: 1000,
+            initialTemp: 200,
+            coolingFactor: 0.95,
+            minTemp: 1.0
+        }
+    });
+}
+
+// Load and process the CSV file
+fetch('./imports.csv')
+    .then(response => response.text())
+    .then(csvText => {
+        const graphData = processImportsData(csvText);
+        let cy;
+
+        const thresholdSlider = document.getElementById('threshold');
+        const thresholdValue = document.getElementById('threshold-value');
+
+        function updateThresholdDisplay(value) {
+            thresholdValue.textContent = value;
+        }
+
+        // Initialize visualization
+        cy = updateVisualization(graphData, parseInt(thresholdSlider.value));
+
+        // Add slider event listener
+        thresholdSlider.addEventListener('input', (event) => {
+            const newThreshold = parseInt(event.target.value);
+            updateThresholdDisplay(newThreshold);
+            
+            if (cy) {
+                cy.destroy();
+            }
+            
+            cy = updateVisualization(graphData, newThreshold);
+            attachEventListeners(cy);
+        });
+
+        function attachEventListeners(cy) {
+            cy.on('tap', 'edge', function(evt) {
+                const edge = evt.target;
+                const sourceFile = edge.source().id();
+                const targetFile = edge.target().id();
+                const commonImports = edge.data('commonImports');
+
+                let panelContent = `
+                    <h3>Common Imports</h3>
+                    <p>Between:<br>
+                    <i>${sourceFile}</i><br>and<br>
+                    <i>${targetFile}</i></p>
+                    <p>Number of common imports: ${edge.data('weight')}</p>
+                    <hr>
+                    <ul>
+                        ${commonImports.map(imp => `<li>${imp}</li>`).join('')}
+                    </ul>
+                `;
+
+                document.getElementById('info-panel').innerHTML = panelContent;
+                document.getElementById('info-panel').style.display = 'block';
+            });
+
+            cy.on('tap', function(event) {
+                if (event.target === cy) {
+                    document.getElementById('info-panel').style.display = 'none';
+                }
+            });
+        }
+
+        attachEventListeners(cy);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('cy').innerHTML = `
+            <p style="color: red; padding: 20px;">
+                Error loading or processing data: ${error.message}
+            </p>`;
+    });
+</script>
+
+</body>
+</html> 
